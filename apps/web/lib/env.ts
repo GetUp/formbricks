@@ -184,6 +184,7 @@ const parsedEnv = createEnv({
         : z.url("REDIS_URL is required for caching, rate limiting, and audit logging"),
     PASSWORD_RESET_DISABLED: z.enum(["1", "0"]).optional(),
     PASSWORD_RESET_TOKEN_LIFETIME_MINUTES: z.coerce.number().int().min(5).max(120).optional().default(30),
+    DISABLE_FORMBRICKS_BRANDING: z.enum(["1", "0"]).optional(),
     PRIVACY_URL: z
       .url()
       .optional()
@@ -324,6 +325,7 @@ const parsedEnv = createEnv({
     REDIS_URL: process.env.REDIS_URL,
     PASSWORD_RESET_DISABLED: process.env.PASSWORD_RESET_DISABLED,
     PASSWORD_RESET_TOKEN_LIFETIME_MINUTES: process.env.PASSWORD_RESET_TOKEN_LIFETIME_MINUTES,
+    DISABLE_FORMBRICKS_BRANDING: process.env.DISABLE_FORMBRICKS_BRANDING,
     PRIVACY_URL: process.env.PRIVACY_URL,
     RATE_LIMITING_DISABLED: process.env.RATE_LIMITING_DISABLED,
     TELEMETRY_DISABLED: process.env.TELEMETRY_DISABLED,

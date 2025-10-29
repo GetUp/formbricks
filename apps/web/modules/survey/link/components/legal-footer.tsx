@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import { CustomLegalFooter } from "./custom-legal-footer";
 
 interface LegalFooterProps {
   IMPRINT_URL?: string;
@@ -10,13 +11,15 @@ interface LegalFooterProps {
   surveyUrl: string;
 }
 
-export const LegalFooter = ({
-  IMPRINT_URL,
-  PRIVACY_URL,
-  IS_FORMBRICKS_CLOUD,
-  surveyUrl,
-}: LegalFooterProps) => {
+export const LegalFooter = (props: LegalFooterProps) => {
   const { t } = useTranslation();
+  const { IMPRINT_URL, PRIVACY_URL, IS_FORMBRICKS_CLOUD, surveyUrl } = props;
+  // TODO: Make configurable via USE_CUSTOM_LEGAL_FOOTER environment variable
+  const useCustomLegalFooter = true;
+  if (useCustomLegalFooter) {
+    return <CustomLegalFooter {...props} />;
+  }
+
   if (!IMPRINT_URL && !PRIVACY_URL && !IS_FORMBRICKS_CLOUD) return null;
 
   return (

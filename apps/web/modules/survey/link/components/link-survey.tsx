@@ -28,6 +28,7 @@ interface LinkSurveyProps {
   IMPRINT_URL?: string;
   PRIVACY_URL?: string;
   IS_FORMBRICKS_CLOUD: boolean;
+  DISABLE_FORMBRICKS_BRANDING: boolean;
   locale: string;
   isPreview: boolean;
   contactId?: string;
@@ -49,6 +50,7 @@ export const LinkSurvey = ({
   IMPRINT_URL,
   PRIVACY_URL,
   IS_FORMBRICKS_CLOUD,
+  DISABLE_FORMBRICKS_BRANDING,
   locale,
   isPreview,
   contactId,
@@ -174,7 +176,7 @@ export const LinkSurvey = ({
       IS_FORMBRICKS_CLOUD={IS_FORMBRICKS_CLOUD}
       IMPRINT_URL={IMPRINT_URL}
       PRIVACY_URL={PRIVACY_URL}
-      isBrandingEnabled={project.linkSurveyBranding}>
+      isBrandingEnabled={!DISABLE_FORMBRICKS_BRANDING && project.linkSurveyBranding}>
       <SurveyInline
         appUrl={publicDomain}
         environmentId={survey.environmentId}
@@ -182,7 +184,7 @@ export const LinkSurvey = ({
         survey={survey}
         styling={determineStyling()}
         languageCode={languageCode}
-        isBrandingEnabled={project.linkSurveyBranding}
+        isBrandingEnabled={!DISABLE_FORMBRICKS_BRANDING && project.linkSurveyBranding}
         shouldResetQuestionId={false}
         // eslint-disable-next-line jsx-a11y/no-autofocus -- need it as focus behaviour is different in normal surveys and survey preview
         autoFocus={autoFocus}

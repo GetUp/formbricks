@@ -125,6 +125,7 @@
         "CRON_SECRET",
         "DATABASE_URL",
         "DEBUG",
+        "DISABLE_FORMBRICKS_BRANDING",
         "E2E_TESTING",
         "EMAIL_AUTH_DISABLED",
         "EMAIL_VERIFICATION_DISABLED",

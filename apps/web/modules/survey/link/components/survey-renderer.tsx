@@ -4,6 +4,7 @@ import { TProjectStyling } from "@formbricks/types/project";
 import { TSurvey, TSurveyStyling } from "@formbricks/types/surveys/types";
 import { TUserLocale } from "@formbricks/types/user";
 import {
+  DISABLE_FORMBRICKS_BRANDING,
   IMPRINT_URL,
   IS_FORMBRICKS_CLOUD,
   IS_RECAPTCHA_CONFIGURED,
@@ -145,6 +146,7 @@ export const renderSurvey = async ({
         IMPRINT_URL={IMPRINT_URL}
         PRIVACY_URL={PRIVACY_URL}
         IS_FORMBRICKS_CLOUD={IS_FORMBRICKS_CLOUD}
+        DISABLE_FORMBRICKS_BRANDING={DISABLE_FORMBRICKS_BRANDING}
         verifiedEmail={verifiedEmail}
         languageCode={languageCode}
         isEmbed={isEmbed}
@@ -177,6 +179,7 @@ export const renderSurvey = async ({
       IMPRINT_URL={IMPRINT_URL}
       PRIVACY_URL={PRIVACY_URL}
       IS_FORMBRICKS_CLOUD={IS_FORMBRICKS_CLOUD}
+      DISABLE_FORMBRICKS_BRANDING={DISABLE_FORMBRICKS_BRANDING}
     />
   );
 };

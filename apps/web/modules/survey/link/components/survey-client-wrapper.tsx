@@ -31,6 +31,7 @@ interface SurveyClientWrapperProps {
   IMPRINT_URL?: string;
   PRIVACY_URL?: string;
   IS_FORMBRICKS_CLOUD: boolean;
+  DISABLE_FORMBRICKS_BRANDING: boolean;
 }
 
 let setBlockId = (_: string) => {};
@@ -54,6 +55,7 @@ export const SurveyClientWrapper = ({
   IMPRINT_URL,
   PRIVACY_URL,
   IS_FORMBRICKS_CLOUD,
+  DISABLE_FORMBRICKS_BRANDING,
 }: SurveyClientWrapperProps) => {
   const searchParams = useSearchParams();
   const skipPrefilled = searchParams.get("skipPrefilled") === "true";
@@ -146,7 +148,7 @@ export const SurveyClientWrapper = ({
         IS_FORMBRICKS_CLOUD={IS_FORMBRICKS_CLOUD}
         IMPRINT_URL={IMPRINT_URL}
         PRIVACY_URL={PRIVACY_URL}
-        isBrandingEnabled={project.linkSurveyBranding}
+        isBrandingEnabled={project.linkSurveyBranding && !DISABLE_FORMBRICKS_BRANDING}
         dir={logoDir}>
         <SurveyInline
           appUrl={publicDomain}
@@ -155,7 +157,7 @@ export const SurveyClientWrapper = ({
           survey={survey}
           styling={styling}
           languageCode={languageCode}
-          isBrandingEnabled={project.linkSurveyBranding}
+          isBrandingEnabled={project.linkSurveyBranding && !DISABLE_FORMBRICKS_BRANDING}
           shouldResetQuestionId={false}
           autoFocus={autoFocus}
           prefillResponseData={prefillValue}

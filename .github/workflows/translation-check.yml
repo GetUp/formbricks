@@ -4,6 +4,7 @@ permissions:
   contents: read
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
@@ -11,14 +12,15 @@ on:
       - "apps/web/**/*.tsx"
       - "apps/web/locales/**/*.json"
       - "scan-translations.ts"
-  push:
-    branches:
-      - main
-    paths:
-      - "apps/web/**/*.ts"
-      - "apps/web/**/*.tsx"
-      - "apps/web/locales/**/*.json"
-      - "scan-translations.ts"
+  # GetUp: Commented out automatic push trigger - run manually or on PR only
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - "apps/web/**/*.ts"
+  #     - "apps/web/**/*.tsx"
+  #     - "apps/web/locales/**/*.json"
+  #     - "scan-translations.ts"
 
 jobs:
   validate-translations:

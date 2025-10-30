@@ -1,9 +1,10 @@
 name: SonarQube
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+  # GetUp: Commented out automatic push trigger - runs on PR only
+  # push:
+  #   branches:
+  #     - main
   pull_request:
     types: [opened, synchronize, reopened]
   merge_group:

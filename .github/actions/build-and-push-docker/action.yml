@@ -270,13 +270,11 @@ runs:
 
     - name: Build and push Docker image
       id: build
-      uses: depot/build-push-action@636daae76684e38c301daa0c5eca1c095b24e780 # v1.14.0
+      uses: docker/build-push-action@ca052bb54ab0790a636c9b5f226502c73d547a25 # v5.4.0
       with:
-        project: tw0fqmsx3c
-        token: ${{ env.DEPOT_PROJECT_TOKEN }}
         context: ${{ inputs.context }}
         file: ${{ inputs.dockerfile }}
-        platforms: linux/amd64,linux/arm64
+        platforms: linux/amd64
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ inputs.registry_type == 'ecr' && steps.ecr-tags.outputs.tags || (inputs.registry_type == 'ghcr' && inputs.experimental_mode == 'true' && steps.ghcr-meta-experimental.outputs.tags) || (inputs.registry_type == 'ghcr' && inputs.experimental_mode == 'false' && steps.ghcr-extra-tags.outputs.tags) || (inputs.registry_type == 'ghcr' && format('ghcr.io/{0}:{1}', inputs.ghcr_image_name, steps.version.outputs.version)) || (inputs.registry_type == 'ecr' && format('{0}/{1}:{2}', inputs.ecr_registry, inputs.ecr_repository, steps.version.outputs.version)) }}
         labels: ${{ inputs.registry_type == 'ghcr' && inputs.experimental_mode == 'true' && steps.ghcr-meta-experimental.outputs.labels || '' }}
@@ -286,7 +284,6 @@ runs:
           redis_url=${{ env.DUMMY_REDIS_URL }}
           sentry_auth_token=${{ env.SENTRY_AUTH_TOKEN }}
       env:
-        DEPOT_PROJECT_TOKEN: ${{ env.DEPOT_PROJECT_TOKEN }}
         DUMMY_DATABASE_URL: ${{ env.DUMMY_DATABASE_URL }}
         DUMMY_ENCRYPTION_KEY: ${{ env.DUMMY_ENCRYPTION_KEY }}
         DUMMY_REDIS_URL: ${{ env.DUMMY_REDIS_URL }}

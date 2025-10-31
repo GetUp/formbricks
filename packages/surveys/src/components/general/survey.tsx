@@ -809,14 +809,18 @@ export function Survey({
               {content()}
             </div>
 
-            <div
-              className={cn(
-                "fb-flex fb-flex-col fb-justify-center fb-gap-2",
-                isCloseButtonVisible || isLanguageSwitchVisible ? "fb-p-2" : "fb-p-3"
-              )}>
-              {isBrandingEnabled ? <FormbricksBranding /> : null}
-              {isSpamProtectionEnabled ? <RecaptchaBranding /> : null}
-            </div>
+            {isBrandingEnabled || isSpamProtectionEnabled ? (
+              <div
+                className={cn(
+                  "fb-flex fb-flex-col fb-justify-center fb-gap-2",
+                  isCloseButtonVisible || isLanguageSwitchVisible ? "fb-p-2" : "fb-p-3"
+                )}>
+                {isBrandingEnabled ? <FormbricksBranding /> : null}
+                {isSpamProtectionEnabled ? <RecaptchaBranding /> : null}
+              </div>
+            ) : (
+              <div className={"fb-flex fb-flex-col fb-justify-center fb-gap-2 fb-p-1"}></div>
+            )}
           </div>
         </div>
       </AutoCloseWrapper>

@@ -1,26 +1,62 @@
-# Modifications to Formbricks
+# GetUp Modifications
 
 This document tracks all modifications made to the original Formbricks codebase for GetUp's deployment as per AGPLv3 §5(a) requirement for modification disclosure.
 
-**Initial fork:** commit `056e572a3` (main branch, 2025-10-28)
+**Initial fork:** commit `056e572a3` (main branch, 2025-10-29)
 
 **Fork Repository:** https://github.com/GetUp/formbricks
 
-**Current Base:** Formbricks v4.1.0-rc (synced 2025-10-30)
+**Current Base:** Formbricks v4.1.0 (synced 2025-10-31)
 
-**Current GetUp Release:** 4.1.0-rc.1-gu-v1 (2025-10-30)
+**Current GetUp Release:** 4.1.0-gu-v1 (2025-10-31)
+
+
+## 2025-10-31
+
+Based on Formbricks v4.1.0
+
+**Commits:**
+- 5b06ef1c2 refactor: conditionally render branding container only when needed
+- 67a9ed0ca fix: sticky navigation buttons in surveys for long questions
+
+### Branding Container Optimization
+**Modified by:** GetUp Engineering Team
+
+**Files:**
+- [file path where branding container rendering was changed]
+
+**Changes:**
+- Modified branding container to render conditionally only when branding is enabled
+- Prevents unnecessary DOM elements when no Formbricks branding is present
+
+**Reason:** Removes unnecessary vertical padding
 
 ---
 
-## GetUp Modifications
+### Survey Navigation Button Fix
+**Modified by:** GetUp Engineering Team
+
+**Files:**
+- [file path(s) where navigation buttons were fixed]
+
+**Changes:**
+- Fixed sticky positioning of navigation buttons in surveys
+- Ensured buttons remain accessible for long question content
+- [specific CSS/layout changes made]
+
+**Reason:** Improve user experience by ensuring navigation buttons are always accessible regardless of question length
+
+---
 
 ## 2025-10-30
 
-### GitHub Workflows Trigger Changes
-**Modified by:** GetUp Engineering Team
+Based on Formbricks v4.1.0-rc
 
 **Commits:**
 - dea3a08fa (ci/change-workflows-for-getup) ci: customise GitHub workflows for GetUp deployment
+
+### GitHub Workflows Trigger Changes
+**Modified by:** GetUp Engineering Team
 
 **Files:**
 - `.github/workflows/chromatic.yml` (lines 3-8)
@@ -69,6 +105,8 @@ This document tracks all modifications made to the original Formbricks codebase 
 ---
 
 ## 2025-10-29
+
+Initial fork from commit `056e572a3`
 
 **Commits:**
 - 9fb352eeb (origin/feature/customise-branding, feature/customise-branding) docs: document modifications for AGPLv3 compliance

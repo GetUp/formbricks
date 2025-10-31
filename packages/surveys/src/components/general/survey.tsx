@@ -743,7 +743,7 @@ export function Survey({
           return (
             <>
               {localSurvey.type !== "link" ? (
-                <div className="bg-survey-bg flex h-6 justify-end pt-2 pr-2">
+                <div className="bg-survey-bg flex h-6 justify-end pr-2 pt-2">
                   <SurveyCloseButton onClose={onClose} />
                 </div>
               ) : null}
@@ -891,14 +891,18 @@ export function Survey({
               {content()}
             </div>
 
-            <div
-              className={cn(
-                "flex flex-col justify-center gap-2",
-                isCloseButtonVisible || isLanguageSwitchVisible ? "p-2" : "p-3"
-              )}>
-              {isBrandingEnabled ? <FormbricksBranding /> : null}
-              {isSpamProtectionEnabled ? <RecaptchaBranding /> : null}
-            </div>
+            {isBrandingEnabled || isSpamProtectionEnabled ? (
+              <div
+                className={cn(
+                  "flex flex-col justify-center gap-2",
+                  isCloseButtonVisible || isLanguageSwitchVisible ? "p-2" : "p-3"
+                )}>
+                {isBrandingEnabled ? <FormbricksBranding /> : null}
+                {isSpamProtectionEnabled ? <RecaptchaBranding /> : null}
+              </div>
+            ) : (
+              <div className={"flex flex-col justify-center gap-2 p-1"}></div>
+            )}
           </div>
         </div>
       </AutoCloseWrapper>

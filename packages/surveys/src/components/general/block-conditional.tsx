@@ -343,10 +343,11 @@ export function BlockConditional({
             })}
           </div>
 
+          {/* GetUp: Always sticky navigation buttons for long questions */}
           <div
             className={cn(
               "flex w-full flex-row-reverse justify-between",
-              fullSizeCards ? "bg-survey-bg sticky bottom-0" : ""
+              "bg-survey-bg sticky bottom-0 z-30 mt-2 pt-2"
             )}>
             <div>
               <SubmitButton

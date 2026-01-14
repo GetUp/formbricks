@@ -131,6 +131,39 @@ DISABLE_FORMBRICKS_BRANDING=1
 
 ---
 
+## 2025-10-31
+
+### Conditional Branding Container Rendering
+**Modified by:** GetUp Engineering Team
+
+**Files:**
+- `packages/surveys/src/components/general/survey.tsx`
+
+**Changes:**
+- Refactored branding/recaptcha container to only render when either is enabled
+- Renders minimal spacer div when neither branding nor recaptcha is enabled
+- Reduces visual noise when branding is disabled
+
+**Reason:** When `DISABLE_FORMBRICKS_BRANDING=1` is set, the empty branding container was still visible. This change removes it entirely when not needed.
+
+---
+
+### Sticky Navigation Buttons Fix
+**Modified by:** GetUp Engineering Team
+
+**Files:**
+- `packages/surveys/src/styles/global.css`
+
+**Changes:**
+- Added CSS rule to make survey navigation buttons sticky at bottom of screen
+- Targets the button container pattern used across all question components
+- Uses `position: sticky` with `bottom: 0` and appropriate z-index
+- Background matches survey background colour for clean transition
+
+**Reason:** Improves user experience for surveys with long question content, ensuring navigation buttons remain accessible without scrolling
+
+---
+
 ## 2026-01-07 (Upgrade to 4.5.0)
 
 ### Upstream Upgrade: 4.1.0 → 4.5.0
@@ -151,34 +184,35 @@ DISABLE_FORMBRICKS_BRANDING=1
 
 ---
 
-### Sticky Navigation Buttons Fix
+## 2026-01-14
+
+### Sticky Navigation Buttons Fix (Updated for 4.5.0)
 **Modified by:** GetUp Engineering Team
 
 **Files:**
+- `packages/surveys/src/components/general/block-conditional.tsx`
+- `packages/surveys/src/components/wrappers/scrollable-container.tsx`
 - `packages/surveys/src/styles/global.css`
 
 **Changes:**
-- Added CSS rule to make survey navigation buttons sticky at bottom of screen
-- Targets the button container pattern used across all question components
-- Uses `position: sticky` with `bottom: 0` and appropriate z-index
-- Background matches survey background colour for clean transition
+
+`block-conditional.tsx`:
+- Modified button container to always apply sticky positioning (previously only applied when `fullSizeCards` was true)
+- Changed conditional `fullSizeCards ? "bg-survey-bg sticky bottom-0" : ""` to always apply `"bg-survey-bg sticky bottom-0 z-30 pt-2 mt-2"`
+- Added `z-30` to ensure buttons appear above survey content/options
+- Added `pt-2 mt-2` for visual separation from content above
+- Added comment marking this as a GetUp customisation for easier identification during upstream merges
+
+`scrollable-container.tsx`:
+- Removed bottom gradient overlay (`from-survey-bg ... to-transparent`) which conflicted with sticky buttons
+- Increased scroll-to-bottom chevron button z-index from `z-20` to `z-40` so it appears above sticky buttons
+
+`global.css`:
+- Removed obsolete CSS rule from 2025-10-31 that targeted `fb-` prefixed classes (no longer works in 4.5.0 due to Tailwind prefix removal and component restructuring)
+
+**Note:** This replaces the original 2025-10-31 CSS-based fix which no longer worked after the 4.5.0 upgrade. The component-level fix is more robust and easier to maintain during upstream syncs.
 
 **Reason:** Improves user experience for surveys with long question content, ensuring navigation buttons remain accessible without scrolling
-
----
-
-### Conditional Branding Container Rendering
-**Modified by:** GetUp Engineering Team
-
-**Files:**
-- `packages/surveys/src/components/general/survey.tsx`
-
-**Changes:**
-- Refactored branding/recaptcha container to only render when either is enabled
-- Renders minimal spacer div when neither branding nor recaptcha is enabled
-- Reduces visual noise when branding is disabled
-
-**Reason:** When `DISABLE_FORMBRICKS_BRANDING=1` is set, the empty branding container was still visible. This change removes it entirely when not needed.
 
 ---
 

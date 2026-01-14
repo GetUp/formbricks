@@ -85,14 +85,14 @@ export const ScrollableContainer = forwardRef<ScrollableContainerHandle, Scrolla
           className={cn("bg-survey-bg overflow-auto px-4")}>
           {children}
         </div>
+        {/* GetUp: Removed bottom gradient overlay - conflicts with sticky navigation buttons */}
         {!isAtBottom && (
           <>
-            <div className="from-survey-bg absolute right-4 bottom-0 left-4 h-4 bg-linear-to-t to-transparent" />
             <button
               type="button"
               onClick={scrollToBottom}
               style={{ transform: "translateX(-50%)" }}
-              className="bg-survey-bg hover:border-border focus:ring-brand absolute bottom-2 left-1/2 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-transparent shadow-lg transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-hidden"
+              className="bg-survey-bg hover:border-border focus:ring-brand absolute bottom-2 left-1/2 z-40 flex h-8 w-8 items-center justify-center rounded-full border border-transparent shadow-lg transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-hidden"
               aria-label="Scroll to bottom">
               <ChevronDownIcon className="text-heading h-5 w-5" />
             </button>

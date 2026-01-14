@@ -2,7 +2,7 @@
 
 This document tracks all modifications made to the original Formbricks codebase for GetUp's deployment.
 
-**Base Version:** Formbricks upstream commit `056e572a313f02368a30530c9ba8e735c813cd69` (2025-10-28)
+**Base Version:** Formbricks 4.5.0 (tag: `4.5.0`)
 **Fork Repository:** https://github.com/GetUp/formbricks
 
 **Notice:** This document satisfies AGPLv3 §5(a) requirement for modification disclosure.
@@ -58,7 +58,7 @@ This document tracks all modifications made to the original Formbricks codebase 
 - `apps/web/lib/env.ts`
 - `apps/web/lib/constants.ts`
 - `apps/web/modules/survey/link/components/survey-renderer.tsx`
-- `apps/web/modules/survey/link/components/link-survey.tsx`
+- `apps/web/modules/survey/link/components/survey-client-wrapper.tsx`
 - `apps/web/modules/survey/link/components/pin-screen.tsx`
 - `.env.example`
 - `turbo.json`
@@ -66,6 +66,7 @@ This document tracks all modifications made to the original Formbricks codebase 
 **Changes:**
 - Added `DISABLE_FORMBRICKS_BRANDING` environment variable (default: not set)
 - Implemented prop-drilling pattern to pass branding flag from server components to client components
+- Modified `isBrandingEnabled` logic to respect `DISABLE_FORMBRICKS_BRANDING` when true
 - Added environment variable to Turbo pipeline configuration
 - Updated `.env.example` with documentation
 
@@ -127,6 +128,91 @@ DISABLE_FORMBRICKS_BRANDING=1
 **Reason:** Provide manual control over workflow execution and reduce unnecessary automatic runs on every push to main. All workflows remain functional via manual dispatch and PR validation workflows continue to run automatically. This aligns with GetUp's deployment strategy of controlled, manual deployments.
 
 **Impact:** No automatic workflows run on push to main (chromatic, sonarqube, translation-check). PR validation workflows (test, lint, e2e) remain unchanged and continue to run automatically on pull requests.
+
+---
+
+## 2025-10-31
+
+### Conditional Branding Container Rendering
+**Modified by:** GetUp Engineering Team
+
+**Files:**
+- `packages/surveys/src/components/general/survey.tsx`
+
+**Changes:**
+- Refactored branding/recaptcha container to only render when either is enabled
+- Renders minimal spacer div when neither branding nor recaptcha is enabled
+- Reduces visual noise when branding is disabled
+
+**Reason:** When `DISABLE_FORMBRICKS_BRANDING=1` is set, the empty branding container was still visible. This change removes it entirely when not needed.
+
+---
+
+### Sticky Navigation Buttons Fix
+**Modified by:** GetUp Engineering Team
+
+**Files:**
+- `packages/surveys/src/styles/global.css`
+
+**Changes:**
+- Added CSS rule to make survey navigation buttons sticky at bottom of screen
+- Targets the button container pattern used across all question components
+- Uses `position: sticky` with `bottom: 0` and appropriate z-index
+- Background matches survey background colour for clean transition
+
+**Reason:** Improves user experience for surveys with long question content, ensuring navigation buttons remain accessible without scrolling
+
+---
+
+## 2026-01-07 (Upgrade to 4.5.0)
+
+### Upstream Upgrade: 4.1.0 → 4.5.0
+**Modified by:** GetUp Engineering Team
+
+**Changes:**
+- Rebased all GetUp customisations onto upstream Formbricks 4.5.0
+- This upgrade addresses the Next.js middleware vulnerability (CVE-2025-29927)
+- Resolved conflicts from upstream refactoring (component structure changes)
+
+**Files Updated for Upstream Compatibility:**
+- `apps/web/modules/survey/link/components/survey-client-wrapper.tsx` - Added `DISABLE_FORMBRICKS_BRANDING` prop (upstream restructured `link-survey.tsx` into this component)
+- `apps/web/modules/survey/link/components/survey-renderer.tsx` - Updated prop passing for new component structure
+- `apps/web/modules/survey/link/components/pin-screen.tsx` - Updated prop passing for new component structure
+- `packages/surveys/src/components/general/survey.tsx` - Merged conditional branding container logic with upstream changes
+
+**Reason:** Security update to patch Next.js vulnerability and maintain compatibility with latest upstream features
+
+---
+
+## 2026-01-14
+
+### Sticky Navigation Buttons Fix (Updated for 4.5.0)
+**Modified by:** GetUp Engineering Team
+
+**Files:**
+- `packages/surveys/src/components/general/block-conditional.tsx`
+- `packages/surveys/src/components/wrappers/scrollable-container.tsx`
+- `packages/surveys/src/styles/global.css`
+
+**Changes:**
+
+`block-conditional.tsx`:
+- Modified button container to always apply sticky positioning (previously only applied when `fullSizeCards` was true)
+- Changed conditional `fullSizeCards ? "bg-survey-bg sticky bottom-0" : ""` to always apply `"bg-survey-bg sticky bottom-0 z-30 pt-2 mt-2"`
+- Added `z-30` to ensure buttons appear above survey content/options
+- Added `pt-2 mt-2` for visual separation from content above
+- Added comment marking this as a GetUp customisation for easier identification during upstream merges
+
+`scrollable-container.tsx`:
+- Removed bottom gradient overlay (`from-survey-bg ... to-transparent`) which conflicted with sticky buttons
+- Increased scroll-to-bottom chevron button z-index from `z-20` to `z-40` so it appears above sticky buttons
+
+`global.css`:
+- Removed obsolete CSS rule from 2025-10-31 that targeted `fb-` prefixed classes (no longer works in 4.5.0 due to Tailwind prefix removal and component restructuring)
+
+**Note:** This replaces the original 2025-10-31 CSS-based fix which no longer worked after the 4.5.0 upgrade. The component-level fix is more robust and easier to maintain during upstream syncs.
+
+**Reason:** Improves user experience for surveys with long question content, ensuring navigation buttons remain accessible without scrolling
 
 ---
 

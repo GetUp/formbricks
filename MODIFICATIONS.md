@@ -2,10 +2,40 @@
 
 This document tracks all modifications made to the original Formbricks codebase for GetUp's deployment.
 
-**Base Version:** Formbricks 4.5.0 (tag: `4.5.0`)
+**Base Version:** Formbricks 4.6.1 (tag: `4.6.1`)
 **Fork Repository:** https://github.com/GetUp/formbricks
 
 **Notice:** This document satisfies AGPLv3 §5(a) requirement for modification disclosure.
+
+---
+
+## 2026-02-09 (Upgrade to 4.6.1)
+
+### Upstream Upgrade: 4.5.0 -> 4.6.1
+**Modified by:** GetUp Engineering Team
+
+**Changes:**
+- Created upstream reference branch `upstream-4.6.1` from upstream tag `4.6.1`
+- Created GetUp release branch `release/4.6.1-getup` from `upstream-4.6.1`
+- Reapplied all existing GetUp customisations from the `4.5.0` release line
+- `apps/web/modules/survey/link/components/survey-client-wrapper.tsx` - merged upstream additions (`CustomScriptsInjector`, RTL logo direction handling) with GetUp's `DISABLE_FORMBRICKS_BRANDING` behaviour
+
+**Reapplied Commit Provenance (from `upstream-4.5.0..release/4.5.0-getup`):**
+- `c9f720a71` feat: update branding assets and metadata for GetUp
+- `26b15e460` feat: add custom legal footer for GetUp
+- `6b0641135` feat: add environment variable to disable Formbricks branding
+- `2cc019dae` docs: document modifications for AGPLv3 compliance
+- `c17e73443` ci: customise GitHub workflows for GetUp deployment
+- `9806a6235` fix: sticky navigation buttons in surveys for long questions
+- `da2e82f8d` refactor: conditionally render branding container only when needed
+- `ae079b0a3` docs: update MODIFICATIONS.md for 4.5.0-gu-v1 release
+- `f7b1d456d` fix: sticky navigation buttons for 4.5.0
+
+**Compatibility Notes:**
+- `DISABLE_FORMBRICKS_BRANDING` behaviour remains intact for both link survey wrapper and inline survey branding visibility
+- Turbo build cache dependency for `DISABLE_FORMBRICKS_BRANDING` remains configured in `turbo.json`
+
+**Reason:** Upgrade GetUp fork to upstream Formbricks `4.6.1` while preserving all existing GetUp-specific behaviour and AGPL compliance customisations
 
 ---
 

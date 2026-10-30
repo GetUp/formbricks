@@ -33,6 +33,46 @@ Three tiers. Each branch is exactly what its instance runs; there is no brand sw
 
 ---
 
+## 2026-10-30 (4.9.7 follow-up fixes)
+
+### Branding switch on inactive and completed survey pages
+**Modified by:** GetUp Engineering Team
+
+**Files:**
+- `apps/web/modules/survey/link/components/survey-inactive.tsx`
+- `apps/web/modules/survey/link/components/survey-completed-message.tsx`
+
+**Changes:**
+- Both files are server components and now import `DISABLE_FORMBRICKS_BRANDING` from `@/lib/constants` directly (no prop drilling needed)
+- `showBranding = !DISABLE_FORMBRICKS_BRANDING && (!project || project.linkSurveyBranding)` gates the Formbricks footer logo (link to formbricks.com) in both files
+- `survey-inactive.tsx`: `showCTA` is additionally gated by `!DISABLE_FORMBRICKS_BRANDING`, so the "Create your own" button linking to formbricks.com is hidden
+- Hunks are marked with `GetUp:` comments
+
+**Reason:** `DISABLE_FORMBRICKS_BRANDING=1` was honoured only on the live survey (survey client wrapper, PIN screen, inline branding). Paused, closed, expired, invalid-link and already-answered pages still showed the Formbricks logo, and paused/completed pages the "Create your own" button. This gap predates 4.9.7; it was found in the 4.9.7 review
+
+---
+
+### RDS CA bundle baked into the image
+**Modified by:** GetUp Engineering Team
+
+**Files:**
+- `apps/web/Dockerfile` (runner stage, before `USER nextjs`)
+- `apps/web/scripts/docker/rds-global-bundle.pem` (new file, vendored)
+
+**Changes:**
+- Vendored a fresh copy of https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem (fetched 2026-10-30, 114 certificates). It is force-added because `*.pem` is gitignored; the root `.dockerignore` `*.pem` rule matches root-level files only, so the file is in the build context (checked with `moby/patternmatcher`, the matcher BuildKit uses)
+- The runner stage copies it from the build context with `COPY --chmod=644` to `/usr/local/share/ca-certificates/global-bundle.pem`, the path `NODE_EXTRA_CA_CERTS` points at
+- To refresh: re-download to the same path and rebuild
+
+**Compatibility Notes:**
+- The shared instance ran every fork image from `4.1.0-gu-v1` to `4.6.1-gu-v2` without the bundle: no fork image ever contained the file, and Node logged "Ignoring extra certs" at every start. Only the pre-fork image (`terraform-getup-infra/docker/formbricks/Dockerfile`, wrapping stock `ghcr.io/formbricks/formbricks:4.0.0`) added it at this path. This change restores that behaviour
+- `NODE_EXTRA_CA_CERTS` in Terraform is unchanged (same path); no infrastructure change is needed
+- Prisma's query engine does not read `NODE_EXTRA_CA_CERTS`, so the database connection still depends on the `sslmode` in `DATABASE_URL`; the bundle affects Node-side TLS only
+
+**Reason:** Make the image match what the ECS task definition already assumes, and stop the start-up warning
+
+---
+
 ## 2026-10-30 (Upgrade to 4.9.7)
 
 ### Upstream Upgrade: 4.6.1 -> 4.9.7
@@ -65,9 +105,9 @@ Three tiers. Each branch is exactly what its instance runs; there is no brand sw
 
 **Compatibility Notes:**
 - Upstream added `TERMS_URL` to the link-survey legal footer; the GetUp Legal modal does not display it (it shows privacy, source and licence only). Extend `custom-legal-footer.tsx` before relying on `TERMS_URL`
-- `DISABLE_FORMBRICKS_BRANDING` behaviour remains intact for the link survey wrapper, the PIN screen path and inline survey branding visibility; `turbo.json` still declares the variable for build caching
-- Upstream added 12 Prisma migrations between 4.6.1 and 4.9.7; none uses features beyond PostgreSQL 14
-- RDS CA bundle: neither `apps/web/Dockerfile` nor `.github/actions/build-and-push-docker/action.yml` adds `/usr/local/share/ca-certificates/global-bundle.pem` to the fork image. The only Dockerfile that bakes the bundle in is `terraform-getup-infra/docker/formbricks/Dockerfile`, and it wraps the stock `ghcr.io/formbricks/formbricks:4.0.0` image, not this fork. The production task sets `NODE_EXTRA_CA_CERTS` to that path regardless; Prisma's query engine does not use `NODE_EXTRA_CA_CERTS`, so the database connection relies on the `sslmode` in `DATABASE_URL`. Confirm at runtime before the SurveysAU bring-up; this was not verified against the running container
+- `DISABLE_FORMBRICKS_BRANDING` behaviour remains intact for the link survey wrapper, the PIN screen path and inline survey branding visibility; `turbo.json` still declares the variable for build caching. The inactive (paused, closed, expired, invalid link) and already-answered pages did not honour it before or after the upgrade; fixed in the follow-up entry above
+- Upstream added 9 Prisma migrations between 4.6.1 and 4.9.7 (6 SQL, 3 TypeScript data migrations; 12 files in total, counted with `git diff --name-only --diff-filter=A 4.6.1 4.9.7 -- packages/database/migration`); none uses features beyond PostgreSQL 14
+- RDS CA bundle: neither `apps/web/Dockerfile` nor `.github/actions/build-and-push-docker/action.yml` adds `/usr/local/share/ca-certificates/global-bundle.pem` to the fork image. The only Dockerfile that bakes the bundle in is `terraform-getup-infra/docker/formbricks/Dockerfile`, and it wraps the stock `ghcr.io/formbricks/formbricks:4.0.0` image, not this fork. The production task sets `NODE_EXTRA_CA_CERTS` to that path regardless; Prisma's query engine does not use `NODE_EXTRA_CA_CERTS`, so the database connection relies on the `sslmode` in `DATABASE_URL`. Confirm at runtime before the SurveysAU bring-up; this was not verified against the running container. Superseded: the bundle is now baked in (follow-up entry above)
 
 **Reason:** Move the GetUp fork to the last 4.x upstream tag ahead of the SurveysAU instance build (whose branch is cut from this one), while preserving all GetUp-specific behaviour and AGPL compliance customisations
 

@@ -3,6 +3,7 @@ import { CalendarClockIcon, CheckCircle2Icon, HelpCircleIcon, PauseCircleIcon } 
 import Image from "next/image";
 import Link from "next/link";
 import { TSurveyClosedMessage } from "@formbricks/types/surveys/types";
+import { DISABLE_FORMBRICKS_BRANDING } from "@/lib/constants";
 import { getTranslate } from "@/lingodotdev/server";
 import { Button } from "@/modules/ui/components/button";
 import footerLogo from "../lib/footerlogo.svg";
@@ -33,7 +34,11 @@ export const SurveyInactive = async ({
     "link expired": t("c.link_expired_description"),
   };
 
+  // GetUp: DISABLE_FORMBRICKS_BRANDING hides the "Create your own" CTA and the footer logo
+  const showBranding = !DISABLE_FORMBRICKS_BRANDING && (!project || project.linkSurveyBranding);
+
   const showCTA =
+    !DISABLE_FORMBRICKS_BRANDING &&
     status !== "link invalid" &&
     status !== "link expired" &&
     status !== "response submitted" &&
@@ -60,7 +65,7 @@ export const SurveyInactive = async ({
           </Button>
         )}
       </div>
-      {(!project || project.linkSurveyBranding) && (
+      {showBranding && (
         <div>
           <Link href="https://formbricks.com">
             <Image src={footerLogo as string} alt="Brand logo" className="mx-auto w-40" />

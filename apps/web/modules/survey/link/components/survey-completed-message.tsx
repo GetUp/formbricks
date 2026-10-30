@@ -3,6 +3,7 @@ import { CheckCircle2Icon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { TSurveySingleUse } from "@formbricks/types/surveys/types";
+import { DISABLE_FORMBRICKS_BRANDING } from "@/lib/constants";
 import { getTranslate } from "@/lingodotdev/server";
 import footerLogo from "../lib/footerlogo.svg";
 
@@ -15,6 +16,8 @@ export const SurveyCompletedMessage = async ({ singleUseMessage, project }: Surv
   const t = await getTranslate();
   const defaultHeading = t("s.survey_already_answered_heading");
   const defaultSubheading = t("s.survey_already_answered_subheading");
+  // GetUp: DISABLE_FORMBRICKS_BRANDING hides the footer logo
+  const showBranding = !DISABLE_FORMBRICKS_BRANDING && (!project || project.linkSurveyBranding);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-between bg-gradient-to-tr from-slate-200 to-slate-50 py-8 text-center">
@@ -25,7 +28,7 @@ export const SurveyCompletedMessage = async ({ singleUseMessage, project }: Surv
           {singleUseMessage?.subheading ?? defaultSubheading}
         </p>
       </div>
-      {(!project || project.linkSurveyBranding) && (
+      {showBranding && (
         <div>
           <Link href="https://formbricks.com">
             <Image src={footerLogo as string} alt="Brand logo" className="mx-auto w-40" />

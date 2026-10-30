@@ -2,10 +2,74 @@
 
 This document tracks all modifications made to the original Formbricks codebase for GetUp's deployment.
 
-**Base Version:** Formbricks 4.6.1 (tag: `4.6.1`)
+**Base Version:** Formbricks 4.9.7 (tag: `4.9.7`)
 **Fork Repository:** https://github.com/GetUp/formbricks
 
 **Notice:** This document satisfies AGPLv3 §5(a) requirement for modification disclosure.
+
+---
+
+## Release lines
+
+Three tiers. Each branch is exactly what its instance runs; there is no brand switch in code.
+
+| Tier | Branch | Image tag | Instance |
+|---|---|---|---|
+| Upstream reference | `upstream-<ver>`, from upstream tag `<ver>` | – | – |
+| GetUp | `release/<ver>-getup` = `upstream-<ver>` + the GetUp customisation series | `<ver>-gu-vN` | https://survey.getup.org.au |
+| SurveysAU | `release/<ver>-surveysau` = `release/<ver>-getup` + the SurveysAU series (first commit "feat: rebrand for SurveysAU"), free to diverge | `<ver>-surveysau-vN` | https://surveysau.com (admin `surveysau.gu.tools`) |
+
+**Routing rule**
+- A change both instances want lands on the getup branch; the surveysau branch picks it up at the next re-cut, or sooner by `git cherry-pick -x`.
+- A SurveysAU-only change lands on the surveysau branch and never on getup.
+- The same fix is never committed on both branches.
+
+**Replay procedure on an upstream upgrade**
+1. Getup branch per the playbook in the workspace `CLAUDE.md`: `upstream-<new>` from the upstream tag, `release/<new>-getup` from it, then `git cherry-pick -x` the series `git log --oneline upstream-<old>..release/<old>-getup` oldest to newest (skip MODIFICATIONS.md-only bookkeeping commits; carry this file forward and add a new entry).
+2. Re-cut the SurveysAU branch: `git checkout -b release/<new>-surveysau release/<new>-getup`, then `git cherry-pick -x` the series `git log --oneline release/<old>-getup..release/<old>-surveysau`.
+3. Each branch keeps its own `MODIFICATIONS.md`; the surveysau one records the getup base commit it was cut from plus its own series.
+
+**Tags:** `<ver>-gu-vN` and `<ver>-surveysau-vN`, independent counters. Both branches build with `build-and-push-ecr.yml` into the same ECR repository (`internal-tools/formbricks-gu`) and differ only by tag.
+
+---
+
+## 2026-10-30 (Upgrade to 4.9.7)
+
+### Upstream Upgrade: 4.6.1 -> 4.9.7
+**Modified by:** GetUp Engineering Team
+
+**Changes:**
+- Created upstream reference branch `upstream-4.9.7` from upstream tag `4.9.7`
+- Created GetUp release branch `release/4.9.7-getup` from `upstream-4.9.7`
+- Reapplied the GetUp customisation series from `release/4.6.1-getup` with `git cherry-pick -x`, oldest to newest
+- `apps/web/modules/survey/link/components/legal-footer.tsx` - upstream added a `TERMS_URL` prop and link; merged so the GetUp custom footer still takes precedence. `custom-legal-footer.tsx` now accepts (and ignores) `TERMS_URL` so the `{...props}` spread stays type-exact
+- `apps/web/modules/survey/link/components/survey-client-wrapper.tsx` - merged upstream's `TERMS_URL` pass-through with the `DISABLE_FORMBRICKS_BRANDING` gating of `isBrandingEnabled`
+- `apps/web/lib/env.ts`, `turbo.json`, `.env.example` - `DISABLE_FORMBRICKS_BRANDING` re-added beside upstream's new `PASSWORD_RESET_TOKEN_LIFETIME_MINUTES` / `DEBUG_SHOW_RESET_LINK` entries
+- `.github/workflows/translation-check.yml` - upstream removed the `paths:` filters from the triggers (filtering now happens in-job via `dorny/paths-filter`); the GetUp change is re-expressed as `workflow_dispatch` plus a commented-out `push` trigger without a path list
+- `packages/surveys/src/components/general/survey.tsx`, `general/block-conditional.tsx`, `wrappers/scrollable-container.tsx`, `styles/global.css` - applied cleanly; the sticky navigation and conditional branding container hunks are unchanged in intent
+- Cherry-picked `.tsx` files were re-formatted with the 4.9.7 toolchain (`prettier-plugin-tailwindcss` 0.7.2) so Tailwind class order matches upstream. The pre-commit hook had formatted the picks with the 4.6.1 `node_modules` (0.6.11), which reorders classes
+
+**Reapplied Commit Provenance (from `upstream-4.6.1..release/4.6.1-getup`):**
+- `3aa17303d` feat: update branding assets and metadata for GetUp
+- `d825a443c` feat: add custom legal footer for GetUp
+- `17da8ab41` feat: add environment variable to disable Formbricks branding
+- `2aca97aa5` docs: document modifications for AGPLv3 compliance
+- `8d6ffd42e` ci: customise GitHub workflows for GetUp deployment
+- `80287b10f` fix: sticky navigation buttons in surveys for long questions
+- `0246a7505` refactor: conditionally render branding container only when needed
+- `8285e7a04` fix: sticky navigation buttons for 4.5.0
+- Not reapplied: `47ddc755d`, `cfd882908`, `b69d8a2ba` (MODIFICATIONS.md-only bookkeeping; this file is carried forward from `release/4.6.1-getup` instead) and `d9d7d41b2` (see below)
+
+**Dropped: OG image route backport (`d9d7d41b2`)**
+- The 2026-10-29 backport of upstream PR 7208 (`@vercel/og` -> `next/og` in `apps/web/app/api/v1/client/og/route.tsx`) is not reapplied: upstream `4.9.7` already imports `ImageResponse` from `next/og` (verified with `git grep "next/og" 4.9.7 -- apps/web/app/api/v1/client/og/route.tsx`). The 2026-10-29 entry below is retained as history only
+
+**Compatibility Notes:**
+- Upstream added `TERMS_URL` to the link-survey legal footer; the GetUp Legal modal does not display it (it shows privacy, source and licence only). Extend `custom-legal-footer.tsx` before relying on `TERMS_URL`
+- `DISABLE_FORMBRICKS_BRANDING` behaviour remains intact for the link survey wrapper, the PIN screen path and inline survey branding visibility; `turbo.json` still declares the variable for build caching
+- Upstream added 12 Prisma migrations between 4.6.1 and 4.9.7; none uses features beyond PostgreSQL 14
+- RDS CA bundle: neither `apps/web/Dockerfile` nor `.github/actions/build-and-push-docker/action.yml` adds `/usr/local/share/ca-certificates/global-bundle.pem` to the fork image. The only Dockerfile that bakes the bundle in is `terraform-getup-infra/docker/formbricks/Dockerfile`, and it wraps the stock `ghcr.io/formbricks/formbricks:4.0.0` image, not this fork. The production task sets `NODE_EXTRA_CA_CERTS` to that path regardless; Prisma's query engine does not use `NODE_EXTRA_CA_CERTS`, so the database connection relies on the `sslmode` in `DATABASE_URL`. Confirm at runtime before the SurveysAU bring-up; this was not verified against the running container
+
+**Reason:** Move the GetUp fork to the last 4.x upstream tag ahead of the SurveysAU instance build (whose branch is cut from this one), while preserving all GetUp-specific behaviour and AGPL compliance customisations
 
 ---
 
@@ -28,7 +92,7 @@ This document tracks all modifications made to the original Formbricks codebase 
 - First released upstream in Formbricks `4.7.0` (not present in `4.6.1`)
 
 **Compatibility Notes:**
-- This backport becomes a no-op when the fork is refreshed to upstream `4.7.0` or later, because the change is already in upstream. Drop it during that refresh rather than reapplying it
+- This backport becomes a no-op when the fork is refreshed to upstream `4.7.0` or later, because the change is already in upstream. Drop it during that refresh rather than reapplying it (done in the 4.9.7 upgrade above; this entry is history only)
 
 **Reason:** The production image `formbricks-gu:4.6.1-gu-v1` throws "Cannot find module .../next/dist/compiled/@vercel/og/index.node.js" and "failed to pipe response" on every `/api/v1/client/og` request, because the Next.js standalone output does not trace the `@vercel/og` native binary. Survey link previews (Open Graph images) are broken as a result
 

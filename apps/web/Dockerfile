@@ -158,6 +158,12 @@ RUN npm install --ignore-scripts -g prisma@6 \
 COPY --from=installer /app/apps/web/scripts/docker/next-start.sh /home/nextjs/start.sh
 RUN chown nextjs:nextjs /home/nextjs/start.sh && chmod +x /home/nextjs/start.sh
 
+# GetUp: bake in the Amazon RDS CA bundle. The ECS task sets NODE_EXTRA_CA_CERTS to this
+# path; without the file Node logs "Ignoring extra certs" and trusts only its built-in CAs.
+# Vendored from https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem (read
+# straight from the build context; .dockerignore's root-level *.pem rule does not match it).
+COPY --chmod=644 apps/web/scripts/docker/rds-global-bundle.pem /usr/local/share/ca-certificates/global-bundle.pem
+
 EXPOSE 3000
 ENV HOSTNAME="0.0.0.0"
 USER nextjs

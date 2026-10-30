@@ -75,7 +75,7 @@ export const ScrollableContainer = forwardRef<ScrollableContainerHandle, Scrolla
     return (
       <div className="relative">
         {!isAtTop && (
-          <div className="from-survey-bg bg-linear-to-b absolute left-0 right-2 top-0 z-10 h-4 to-transparent" />
+          <div className="from-survey-bg absolute top-0 right-2 left-0 z-10 h-4 bg-linear-to-b to-transparent" />
         )}
         <div
           ref={containerRef}
@@ -92,7 +92,7 @@ export const ScrollableContainer = forwardRef<ScrollableContainerHandle, Scrolla
               type="button"
               onClick={scrollToBottom}
               style={{ transform: "translateX(-50%)" }}
-              className="bg-survey-bg hover:border-border focus:ring-brand focus:outline-hidden absolute bottom-2 left-1/2 z-40 flex h-8 w-8 items-center justify-center rounded-full border border-transparent shadow-lg transition-colors focus:ring-2 focus:ring-offset-2"
+              className="bg-survey-bg hover:border-border focus:ring-brand absolute bottom-2 left-1/2 z-40 flex h-8 w-8 items-center justify-center rounded-full border border-transparent shadow-lg transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-hidden"
               aria-label="Scroll to bottom">
               <ChevronDownIcon className="text-heading h-5 w-5" />
             </button>

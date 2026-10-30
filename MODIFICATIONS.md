@@ -4,6 +4,7 @@ This document tracks all modifications made to the original Formbricks codebase 
 
 **Base Version:** Formbricks 4.9.7 (tag: `4.9.7`)
 **Fork Repository:** https://github.com/GetUp/formbricks
+**This branch:** `release/4.9.7-surveysau` (SurveysAU release line), cut from `release/4.9.7-getup` at `3d6bf8249`
 
 **Notice:** This document satisfies AGPLv3 §5(a) requirement for modification disclosure.
 
@@ -30,6 +31,28 @@ Three tiers. Each branch is exactly what its instance runs; there is no brand sw
 3. Each branch keeps its own `MODIFICATIONS.md`; the surveysau one records the getup base commit it was cut from plus its own series.
 
 **Tags:** `<ver>-gu-vN` and `<ver>-surveysau-vN`, independent counters. Both branches build with `build-and-push-ecr.yml` into the same ECR repository (`internal-tools/formbricks-gu`) and differ only by tag.
+
+---
+
+## 2026-10-30 (SurveysAU release line)
+
+### Rebrand for SurveysAU
+**Modified by:** GetUp Engineering Team
+
+**Base:** `release/4.9.7-getup` at commit `3d6bf8249` (upstream 4.9.7 plus the full GetUp customisation series, including the 4.9.7 follow-up fixes). First cut from `53fe42ed0` and rebased onto `3d6bf8249` the same day with `git rebase --onto`. This branch is that base plus the SurveysAU series below; it is re-cut from the getup branch on every upstream upgrade (see "Release lines").
+
+**Changes (commit "feat: rebrand for SurveysAU"):**
+- `apps/web/public/favicon.ico`, `apps/web/public/favicon/*.png`, `safari-pinned-tab.svg` - replaced the GetUp icon set with a neutral mark (slate rounded square, white "S"), same filenames; the PNGs keep their sizes except `mstile-310x150.png`, which is now a true 310x150 wide tile (was 150x150); `favicon.ico` is now a multi-size ICO with 16x16, 32x32 and 48x48 images (was a single 256x256 PNG-in-ICO); the Safari pinned-tab SVG is a single-colour "S" mask
+- `apps/web/public/favicon/site.webmanifest` - `name` and `short_name` set to "SurveysAU"
+- `apps/web/public/favicon/browserconfig.xml` - Windows tile colour set to the icon colour (`#475569`)
+- `apps/web/app/layout.tsx` - title template `%s | SurveysAU`, default title "SurveysAU", description "SurveysAU survey platform"
+- `apps/web/modules/survey/link/components/custom-legal-footer.tsx` - brand line "SurveysAU" added under the Legal modal heading; `PRIVACY_URL` (env) remains the primary privacy link with a placeholder fallback `https://surveysau.com/privacy` until the SurveysAU privacy notice URL is decided; source code link points at `https://github.com/GetUp/formbricks/tree/release/4.9.7-surveysau`; the AGPLv3 notice and the "Based on Formbricks by Formbricks GmbH" attribution are unchanged
+
+**Intentionally retained from the getup branch:**
+- The GetUp GitHub organisation in the source code link (AGPL §13; the repository is `GetUp/formbricks`)
+- The `GetUp:` customisation markers in code comments (`legal-footer.tsx`, `block-conditional.tsx`, `scrollable-container.tsx`); they are not user-visible and keeping them avoids replay conflicts with the getup branch
+
+**Reason:** Serve the opinion-polling programme under a non-GetUp brand and domain from the same fork, with the GetUp customisations (Legal modal, branding switch, sticky navigation) intact. All GetUp-facing brand elements are replaced in this branch rather than switched by configuration, so the image built from it is exactly what the SurveysAU instance runs.
 
 ---
 
@@ -391,7 +414,9 @@ All modifications documented in this file comply with AGPLv3 licence terms.
 **AGPLv3 §13 Network Use Compliance:**
 Users interacting with this software over a network can access the complete source code at the repository above. The custom legal footer (added in modifications above) provides a prominent link to the source code on all survey pages.
 
-**Deployed Service:** https://survey.getup.org.au/
+**Deployed Services:**
+- https://survey.getup.org.au/ (branch `release/4.9.7-getup`)
+- https://surveysau.com (branch `release/4.9.7-surveysau`, this branch)
 
 **Original Project:** Formbricks by Formbricks GmbH
 **Original Repository:** https://github.com/formbricks/formbricks

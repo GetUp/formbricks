@@ -14,8 +14,11 @@ interface LegalFooterProps {
 export const CustomLegalFooter = ({ PRIVACY_URL }: LegalFooterProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const privacyUrl = PRIVACY_URL || "https://www.getup.org.au/privacy-policy";
-  const sourceCodeUrl = "https://github.com/GetUp/formbricks";
+  const brandName = "SurveysAU";
+  // PRIVACY_URL (env) is the primary source; the fallback is a placeholder until the
+  // SurveysAU privacy notice URL is decided (see the instance plan, open item 1).
+  const privacyUrl = PRIVACY_URL || "https://surveysau.com/privacy";
+  const sourceCodeUrl = "https://github.com/GetUp/formbricks/tree/release/4.9.7-surveysau";
 
   return (
     <>
@@ -57,7 +60,8 @@ export const CustomLegalFooter = ({ PRIVACY_URL }: LegalFooterProps) => {
             </button>
 
             {/* Dialog content */}
-            <h2 className="mb-6 text-xl font-semibold text-slate-900">Legal Information</h2>
+            <h2 className="mb-1 text-xl font-semibold text-slate-900">Legal Information</h2>
+            <p className="mb-6 text-sm text-slate-500">{brandName}</p>
 
             <div className="space-y-6">
               {/* Privacy Policy */}

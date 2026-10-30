@@ -15,10 +15,10 @@ import "../modules/ui/globals.css";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | GetUp",
-    default: "GetUp",
+    template: "%s | SurveysAU",
+    default: "SurveysAU",
   },
-  description: "GetUp's Survey Suite",
+  description: "SurveysAU survey platform",
 };
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {

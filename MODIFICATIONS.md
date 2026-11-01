@@ -4,7 +4,7 @@ This document tracks all modifications made to the original Formbricks codebase 
 
 **Base Version:** Formbricks 4.9.7 (tag: `4.9.7`)
 **Fork Repository:** https://github.com/GetUp/formbricks
-**This branch:** `release/4.9.7-surveysau` (SurveysAU release line), cut from `release/4.9.7-getup` at `3d6bf8249`
+**This branch:** `release/4.9.7-surveysau` (SurveysAU release line), cut from `release/4.9.7-getup` at `61504b8fb`
 
 **Notice:** This document satisfies AGPLv3 §5(a) requirement for modification disclosure.
 
@@ -39,7 +39,7 @@ Three tiers. Each branch is exactly what its instance runs; there is no brand sw
 ### Rebrand for SurveysAU
 **Modified by:** GetUp Engineering Team
 
-**Base:** `release/4.9.7-getup` at commit `3d6bf8249` (upstream 4.9.7 plus the full GetUp customisation series, including the 4.9.7 follow-up fixes). First cut from `53fe42ed0` and rebased onto `3d6bf8249` the same day with `git rebase --onto`. This branch is that base plus the SurveysAU series below; it is re-cut from the getup branch on every upstream upgrade (see "Release lines").
+**Base:** `release/4.9.7-getup` at commit `61504b8fb` (upstream 4.9.7 plus the full GetUp customisation series, including the 4.9.7 follow-up fixes). First cut from `53fe42ed0` and rebased onto `61504b8fb` the same day with `git rebase --onto`. This branch is that base plus the SurveysAU series below; it is re-cut from the getup branch on every upstream upgrade (see "Release lines").
 
 **Changes (commit "feat: rebrand for SurveysAU"):**
 - `apps/web/public/favicon.ico`, `apps/web/public/favicon/*.png`, `safari-pinned-tab.svg` - replaced the GetUp icon set with a neutral mark (slate rounded square, white "S"), same filenames; the PNGs keep their sizes except `mstile-310x150.png`, which is now a true 310x150 wide tile (was 150x150); `favicon.ico` is now a multi-size ICO with 16x16, 32x32 and 48x48 images (was a single 256x256 PNG-in-ICO); the Safari pinned-tab SVG is a single-colour "S" mask

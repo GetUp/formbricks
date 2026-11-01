@@ -63,6 +63,7 @@ Three tiers. Each branch is exactly what its instance runs; there is no brand sw
 - Vendored a fresh copy of https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem (fetched 2026-10-30, 114 certificates). It is force-added because `*.pem` is gitignored; the root `.dockerignore` `*.pem` rule matches root-level files only, so the file is in the build context (checked with `moby/patternmatcher`, the matcher BuildKit uses)
 - The runner stage copies it from the build context with `COPY --chmod=644` to `/usr/local/share/ca-certificates/global-bundle.pem`, the path `NODE_EXTRA_CA_CERTS` points at
 - To refresh: re-download to the same path and rebuild
+- 2026-11-01 follow-up: `COPY --chmod=644` also set mode 644 on the directory it created, so Node could not read the bundle ("Permission denied" at start). Added `RUN chmod 755 /usr/local/share/ca-certificates` after the COPY.
 
 **Compatibility Notes:**
 - The shared instance ran every fork image from `4.1.0-gu-v1` to `4.6.1-gu-v2` without the bundle: no fork image ever contained the file, and Node logged "Ignoring extra certs" at every start. Only the pre-fork image (`terraform-getup-infra/docker/formbricks/Dockerfile`, wrapping stock `ghcr.io/formbricks/formbricks:4.0.0`) added it at this path. This change restores that behaviour

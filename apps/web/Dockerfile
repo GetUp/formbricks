@@ -163,6 +163,8 @@ RUN chown nextjs:nextjs /home/nextjs/start.sh && chmod +x /home/nextjs/start.sh
 # Vendored from https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem (read
 # straight from the build context; .dockerignore's root-level *.pem rule does not match it).
 COPY --chmod=644 apps/web/scripts/docker/rds-global-bundle.pem /usr/local/share/ca-certificates/global-bundle.pem
+# COPY --chmod also applies to the directory it creates; make it traversable by the nextjs user.
+RUN chmod 755 /usr/local/share/ca-certificates
 
 EXPOSE 3000
 ENV HOSTNAME="0.0.0.0"
